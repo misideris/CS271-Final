@@ -573,7 +573,7 @@ function App() {
           <CardMedia
             component="img"
             height="120"
-            image="\images\frog.jpeg"
+            image={`${process.env.PUBLIC_URL}/images/frog.jpeg`}
             alt="Frog Hopping"
           />
           <CardContent sx={{ pb: 0.5 }}>
