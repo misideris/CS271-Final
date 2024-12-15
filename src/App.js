@@ -27,12 +27,14 @@ import * as dff from "./dff.js";
 const SelectableGrid = ({points, setPoints, mobileView}) => {
   const svgRef = useRef(null);
   const [edges, setEdges] = useState([])
+  const [distance, setDistance] = useState(0);
   const [numPoints, setNumPoints] = useState(4)
   const [isProcessing, setIsProcessing] = useState(false)
 
   const clearCanvas = () => {
     setPoints({ X: [], Y: [] }); 
     setEdges([]); 
+    setDistance(0);
     d3.select(svgRef.current).selectAll(".line1-circle").remove(); 
     d3.select(svgRef.current).selectAll(".line2-circle").remove(); 
     d3.select(svgRef.current).selectAll("path").remove(); 
@@ -43,10 +45,12 @@ const SelectableGrid = ({points, setPoints, mobileView}) => {
     let Y = points.Y
     if (X.length == numPoints && Y.length == numPoints && !isProcessing) {
       setIsProcessing(true)
-      let res = dff(X,Y) 
+      let res = dff(X,Y)
       let path = res[1]
+      let bottleneck = res[0]
       let newEdges = path.map((pair) => [points.X[pair[0]], points.Y[pair[1]]])
       setEdges(newEdges)
+      setDistance(bottleneck)
       setIsProcessing(false)
     } else {
        {/*If user attempts to compute distance without points*/}
@@ -331,6 +335,10 @@ svg.selectAll(".line2-circle")
       {`Number of Points: ${numPoints}`}
     </Typography>
     <br />
+    <Typography variant='h7' fontFamily="Sorts Mill Goudy">
+      {`Maximum Distance: ${distance.toFixed(0)}`}
+    </Typography>
+    <br/>
     <Slider
       min={2}
       max={10}
@@ -501,7 +509,7 @@ function App() {
         elevation={10}
         sx={{
           width: "100%",
-          maxWidth: mobileView ? "90%" : "600px",
+          maxWidth: mobileView ? "95%" : "600px",
           padding: "20px",
           margin: "auto",
           mt: "5px",
@@ -509,7 +517,7 @@ function App() {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          ml: "8px",
+          ml: mobileView ? "1px" : "8px",
           bgcolor: "#FOE2D2",
           border: "1px solid #272030",
         }}
